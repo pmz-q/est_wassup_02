@@ -241,7 +241,7 @@ if __name__ == "__main__":
     k: pd.read_csv(v) for k,v in data_path_config['input']['test'].items()
   }
   
-  location = pd.read_csv(data_path_config['input']['county_mapper'])
+  location = pd.read_csv(data_path_config['input']['county_mapper'], index_col=0)
   
   
   FeatureProcessor = FeatureProcessorClass()
