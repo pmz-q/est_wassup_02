@@ -1,5 +1,5 @@
 # merge_data.py 실행하는 경로에 따라 ROOT_PATH 가 변경되어야 합니다.
-ROOT_PATH = '.'
+ROOT_PATH = '..'
 
 ROOT_DATA_PATH = f'{ROOT_PATH}/data/origin/'
 TEST_DATA_PATH = f'{ROOT_DATA_PATH}test/'
