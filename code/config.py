@@ -3,24 +3,33 @@ import torch.nn.functional as F
 import torchmetrics
 from models import ANNMulti
 
+# ROOT_PATH = '..'
 
+# ROOT_DATA_PATH = f'{ROOT_PATH}/data/origin/'
+# TEST_DATA_PATH = f'{ROOT_DATA_PATH}test/'
+# TRAIN_DATA_PATH = f'{ROOT_DATA_PATH}train/'
+
+# ROOT_FEATURE_PATH = f'{ROOT_PATH}/data/features'
+
+config_name = "240104_01"
 # preprocessed csv(train, test)가 있다고 가정한 상태에서 진행합니다. 
 config = {
 
   'files': {
     'train_csv': '../data/tester/train.csv',
     'test_csv': '../data/tester/test.csv',
-    'model_output': '../output/model_output/model.pth',  # 구분할 수 있도록 설정하기
-    'pred_output': '../output/pred_output/pred.csv', # 구분할 수 있도록 설정하기
-    'result_image': '../output/results/config_name.png', 
+    'model_output': f'../output/model_output/{config_name}.pth',  # saved model weights
+    'pred_output': f'../output/pred_output/{config_name}.csv', # neural network predictions
+    'result_image': f'../output/results/{config_name}.png', # neural network results
+    'arima_image': f'../output/results/{config_name}.png' # arima model results
   },
 
   'model': ANNMulti,
   'model_params': {
-    'input_dim': 9,
-    'output_dim': 1,
+    'input_dim': 9, # window size
+    'output_dim': 1, # prediction size
     'hidden_dim': 128,
-    'input_channel': 2,
+    'input_channel': 2, # number of features 
     'activation': F.relu,
   },
 
@@ -42,13 +51,15 @@ config = {
     'device': 'cpu',  #  cuda - gpu 
     'epochs': 1000,
   },
+  'apply_scaler': True, # Scaler # TODO scaler 종류 추가 
 
+  'arima_model': "SARIMA", # ARIMA or SARIMA
   'arima_params':{
-      'target': "SUNACTIVITY",
+      'target': "SUNACTIVITY", # column name of the target
       'order': {
           'p': 9,
           'd': 0,
-          'q': 1
+          'q': 0
       },
       'season_order': {
           'P': 0,

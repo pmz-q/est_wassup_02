@@ -12,8 +12,9 @@ def train_one_epoch(dataloader, model, loss_func, optimizer, device):
     model.train()
     total_loss = 0. 
     for x, y in dataloader:
-        x, y = x.flatten(1).to(device), y[:,:,0].to(device) # 2D로 맞춰줌
+        x, y = x.flatten(1).to(device), y[:,:,0].to(device) # 2D로 맞춰줌 -> 
         # TODO enefit에서는 y[] index 맞춰줄때 어떤 column을 타겟으로 하는지 확인 필요 
+        # y[:,:,0] target_column_index를 받아서 0대신 변수로 넣어줄 수 있음. 
         pred = model(x)
         loss = loss_func(pred, y)
         optimizer.zero_grad()
@@ -32,6 +33,7 @@ def main(cfg):
     import matplotlib.pyplot as plt
 
     train_params = cfg.get("train_params")
+    model_params = cfg.get("model_params")
     device = torch.device(train_params.get("device"))
 
     # get preprocessed csv files
@@ -39,14 +41,17 @@ def main(cfg):
     train_data = pd.read_csv(files.get('train_csv'), index_col=0).to_numpy(dtype=np.float32)
     test_data = pd.read_csv(files.get('test_csv'), index_col=0).to_numpy(dtype=np.float32)
 
+    window_size = model_params.get("input_dim")
+    test_data = np.concatenate([train_data[-window_size:], test_data]) 
+
     # Scaler 
-    # TODO preprocess로 따로 빼는 것 검토, 
-    # TODO config에 scaler 종류 추가하는 것 검토
-    # TODO scale아예 하지 않은 경우 고려하는 것 추가 
-    scaler = MinMaxScaler()
-    trn_scaled = scaler.fit_transform(train_data)
-    tst_scaled = scaler.transform(test_data)   ###### TODO train에서 window만큼 데이터 가져와줘야 함.
-    # tester에선 csv파일에서 윈도우 사이즈를 고려한 test data를 생성해서 일단 진행
+    if cfg.get("apply_scaler", True):
+        scaler = MinMaxScaler()
+        trn_scaled = scaler.fit_transform(train_data)
+        tst_scaled = scaler.transform(test_data) 
+    else:
+        trn_scaled = train_data
+        tst_scaled = test_data 
 
     # Dataset load
     # train
@@ -64,7 +69,6 @@ def main(cfg):
     # x,y = next(iter(tst_dl))
     # print(x.shape, y.shape)
     # print(x.flatten(1).shape, y[:,:,0].shape)
-
 
     # Model
     Model = cfg.get("model")
@@ -97,8 +101,12 @@ def main(cfg):
     # Prediction
     x, y = next(iter(tst_dl)) # to retrieve x, y from tst_dl
     y = y[:,:,0].to(device)  
-    y = y/scaler.scale_[0] + scaler.min_[0] # invejre scaling
-    p = pred/scaler.scale_[0] + scaler.min_[0] # inverse scaling
+    # Inverse scaling
+    if cfg.get("apply_scaler", True):
+        y = y/scaler.scale_[0] + scaler.min_[0] # inverse scaling
+        p = pred/scaler.scale_[0] + scaler.min_[0] # inverse scaling
+    else:
+        pass
     y = np.concatenate([y[:,0], y[-1,1:]]) # true 
     p = np.concatenate([p[:,0], p[-1,1:]]) # prediction
 
@@ -143,3 +151,4 @@ if __name__ == "__main__":
     args = get_args_parser().parse_args()
     exec(open(args.config).read())
     main(config)
+    print("finished! Please check the output folder.")

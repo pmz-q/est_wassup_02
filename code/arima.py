@@ -1,6 +1,9 @@
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.arima.model import ARIMA
 import pandas as pd 
 import numpy as np 
+from metrics import mae, mape, r2_score
+import matplotlib.pyplot as plt 
 
 def arima(cfg):
     arima_params = cfg.get("arima_params")
@@ -12,28 +15,29 @@ def arima(cfg):
     train_df = pd.read_csv(files.get('train_csv'), index_col=0)
     test_df = pd.read_csv(files.get('test_csv'), index_col=0)
 
+    train_df.index = pd.to_datetime(train_df.index)
+    test_df.index = pd.to_datetime(test_df.index)
+
     tgt = arima_params.get("target")
     trn_ds = train_df[tgt]
     tst_ds = test_df[tgt]
+    trn_ds.index.freq = trn_ds.index.inferred_freq
+    tst_ds.index.freq = tst_ds.index.inferred_freq  
 
-    model = SARIMAX(trn_ds, order = (order['p'], order['d'], order['q']), 
-                    seasonal_order= (s_order['P'], s_order['D'], s_order['Q'], s_order['s']))
-    pred = model.fit().forecast(len(tst_ds))
-    pred = pd.Series(pred, index = tst_ds.index)
-    print(pred)
-
+    model_type = cfg.get("arima_model")
+    if model_type == "SARIMA":
+        model = SARIMAX(trn_ds, order = (order['p'], order['d'], order['q']), 
+                        seasonal_order= (s_order['P'], s_order['D'], s_order['Q'], s_order['s']))
+        pred = model.fit(disp=False).forecast(len(tst_ds))
+    else: # "ARIMA"
+        model = ARIMA(trn_ds, order = (order['p'], order['d'], order['q']))
+        pred = model.fit().predict(tst_ds.index[0], tst_ds.index[-1], dynamic=True)
     
-    
-# def arima(train_df, test_df, target: str="SUNACTIVITY", 
-#           p:int=0,d:int=0,q:int=0, pred_start:int=1989, pred_end:int=2008):
-#     trn_ds = train_df.target[:-20]  #TODO test_df에서 test length 추출해서 사용
-#     tst_ds = train_df.target[-20:]  #TODO test_df 통으로 사용
-#     model = ARIMA(trn_ds, order = (p,d,q)).fit()
-#     pred_start = 
-#     pred = model.predict(pred_start, pred_end, dynamic = True)
-
-#     return pred
-
+    # Plot
+    pred.plot()
+    tst_ds.plot(label="real")
+    plt.title(f"{model_type}, MAPE:{mape(pred.values,tst_ds.values):.4f}, MAE:{mae(pred.values,tst_ds.values):.4f}, R2:{r2_score(pred.values,tst_ds.values):.4f}")
+    plt.savefig(files.get("arima_image")) # save as png
 
 ### parser
 def get_args_parser(add_help=True):
@@ -48,6 +52,7 @@ if __name__ == "__main__":
     args = get_args_parser().parse_args()
     exec(open(args.config).read())
     arima(config)
+    print("finished! Please check the output folder.")
 
 
 
