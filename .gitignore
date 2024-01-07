@@ -1,5 +1,9 @@
 # custom ignore
 *.csv
+*.save
+*.pth
+*.json
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
