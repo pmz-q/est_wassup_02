@@ -30,7 +30,7 @@ USE_ARIMA = False
 DROP_COLS_AFTER_MERGE = [
   "county", "is_business", "is_consumption", "product_type",
   "data_block_id", "row_id", "date", "date_client", "forecast_date_electricity",
-  "origin_date_electricity", "forecast_date_gas", "origin_date_gas"
+  "origin_date_electricity", "forecast_date_gas", "origin_date_gas", "prediction_unit_id"
 ]
 
 # choose one: ['min', 'mean', 'max']
