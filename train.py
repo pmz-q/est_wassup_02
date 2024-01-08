@@ -8,6 +8,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 import joblib
+from datetime import timedelta
 
 
 # train & test together
@@ -24,9 +25,14 @@ def main(cfg):
     train_data.index = pd.to_datetime(train_data.index)
     test_data.index = pd.to_datetime(test_data.index)
     
+    model_params = cfg.get("model_params")
+    window_size = model_params.get("input_dim")
+
+    window_index = test_data.index[0] - timedelta(hours = window_size)
     trn_ds = train_data[train_data.index < test_data.index[0]].to_numpy(dtype=np.float32)
-    tst_ds = train_data[train_data.index >= test_data.index[0]].to_numpy(dtype=np.float32)
-    
+    tst_ds = train_data[train_data.index >= window_index].to_numpy(dtype=np.float32)
+    print(window_index) # 2023-05-27 00:00:00
+    print(train_data[train_data.index >= window_index].shape) #120
     # Data Loader
     train_params = cfg.get("train_params")
     # train
@@ -34,13 +40,14 @@ def main(cfg):
     dl_params = train_params.get("data_loader_params")
     trn_ds = TimeseriesDataset(trn_ds, **ds_params)
     trn_dl = DataLoader(trn_ds, **dl_params)
+
     # test
     tst_ds = TimeseriesDataset(tst_ds, **ds_params)
     tst_dl = DataLoader(tst_ds, shuffle=False, batch_size=len(tst_ds))
     
     
     # Model
-    model_params = cfg.get("model_params")
+    # model_params = cfg.get("model_params")
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     Model = cfg.get("model")
@@ -67,6 +74,8 @@ def main(cfg):
     # Prediction
     x, y = next(iter(tst_dl)) # to retrieve x, y from tst_dl
     y = y[:,0].unsqueeze(1).to(device)  
+    print(y.shape)
+
     # Inverse scaling
     y_scaler = None
     try:
@@ -82,6 +91,8 @@ def main(cfg):
 
     y = np.concatenate([y[:,0], y[-1,1:]]) # true 
     p = np.concatenate([p[:,0], p[-1,1:]]) # prediction
+    print(y.shape)
+    print(p.shape)
 
     # print(p)
     pred_df = pd.DataFrame({'prediction': p})
@@ -90,7 +101,7 @@ def main(cfg):
 
     ### Visualization with Results ###
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize = (10, 8))
- 
+    
     # Plotting the losses
     ax1.plot(range(epochs), trn_loss_lst, label='Training Loss')
     ax1.plot(range(epochs), tst_loss_lst, label='Test Loss')
@@ -98,10 +109,11 @@ def main(cfg):
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
     ax1.legend()
-
-    # Visualize results - true, pred with metrics
-    ax2.plot(test_data.index[ds_params["window_size"]:], y, label="True")
-    ax2.plot(test_data.index[ds_params["window_size"]:], p, label="Prediction")
+    
+    window_index = test_data.index[0] - timedelta(hours = window_size)
+    # Visualize results - true, pred with metrics  
+    ax2.plot(train_data[train_data.index >= window_index][window_size:].index, y, label="True")
+    ax2.plot(train_data[train_data.index >= window_index][window_size:].index, p, label="Prediction")
     ax2.set_title(f"{Model}, MAPE:{mape(p,y):.4f}, MAE:{mae(p,y):.4f}, R2:{r2_score(p,y):.4f}")
     ax2.legend()
     plt.xticks(test_data.index[ds_params["window_size"]::3])
