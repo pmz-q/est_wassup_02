@@ -21,7 +21,7 @@ def train_one_epoch(dataloader, model, loss_func, optimizer, device):
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    total_loss = loss.item()*len(y)
+    total_loss += loss.item()*len(y)
   trn_loss = total_loss/len(dataloader.dataset)
   return trn_loss
 
