@@ -99,7 +99,9 @@ class CustomDataset(Dataset):
       # X Features
       trn_df = self._base_preprocess(trn_df)
       tst_df = self._base_preprocess(tst_df)
-      
+    else:
+      trn_df.fillna(method='ffill', inplace=True)
+    
     trn_df.set_index(self.index_col, inplace=True)
     tst_df.set_index(self.index_col, inplace=True)
 

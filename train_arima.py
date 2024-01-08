@@ -26,16 +26,22 @@ if __name__ == "__main__":
     arima_model = config.get("arima_model")
 
     pred, tst_ds = arima(df_train, df_test, arima_model, arima_params)
-
+    
     # Save plot
     output_data = config.get("output_data")
+    
+    pred_save_path = output_data.get("pred_save_path")
+    actual_save_path = output_data.get("actual_save_path")
+    create_path_if_not_exists(pred_save_path)
+    pd.DataFrame(pred).to_csv(pred_save_path)
+    tst_ds.to_csv(actual_save_path)
+
     plot_img_path = output_data.get("plot_img_path")
-    create_path_if_not_exists(plot_img_path)
 
     plt.figure(figsize=(20, 10))
-    plt.plot(pred.index, pred.values, tst_ds.index, tst_ds.values)
+    plt.plot(tst_ds.index, tst_ds.values, pred.index, pred.values)
     plt.title(
-        f"{arima_model}, MAPE:{mape(pred.values,tst_ds.values):.4f}, MAE:{mae(pred.values,tst_ds.values):.4f}, R2:{r2_score(pred.values,tst_ds.values):.4f}"
+        f"{arima_model}, MAPE:{mape(pred.values,tst_ds['target'].values):.4f}, MAE:{mae(pred.values,tst_ds['target'].values):.4f}, R2:{r2_score(pred.values,tst_ds['target'].values):.4f}"
     )
     plt.savefig(plot_img_path)  # save as png
 
