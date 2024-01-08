@@ -30,7 +30,7 @@ def main(cfg):
 
     window_index = test_data.index[0] - timedelta(hours = window_size)
     trn_ds = train_data[train_data.index < test_data.index[0]].to_numpy(dtype=np.float32)
-    tst_ds = train_data[train_data.index >= window_index].to_numpy(dtype=np.float32)
+    tst_ds = train_data[train_data.index >= window_index].to_numpy(dtype=np.float32) # 96 step + 24 step = 120 steps
     print(window_index) # 2023-05-27 00:00:00
     print(train_data[train_data.index >= window_index].shape) #120
     # Data Loader
@@ -43,8 +43,8 @@ def main(cfg):
 
     # test
     tst_ds = TimeseriesDataset(tst_ds, **ds_params)
-    tst_dl = DataLoader(tst_ds, shuffle=False, batch_size=len(tst_ds))
-    
+    tst_dl = DataLoader(tst_ds, shuffle=False, batch_size=len(tst_ds))    # batch 가 87개로 들어가있음 -> TimeseriesDataset확인 len()
+    print(len(tst_ds))
     
     # Model
     # model_params = cfg.get("model_params")
@@ -116,7 +116,8 @@ def main(cfg):
     ax2.plot(train_data[train_data.index >= window_index][window_size:].index, p, label="Prediction")
     ax2.set_title(f"{Model}, MAPE:{mape(p,y):.4f}, MAE:{mae(p,y):.4f}, R2:{r2_score(p,y):.4f}")
     ax2.legend()
-    plt.xticks(test_data.index[ds_params["window_size"]::3])
+    # plt.xticks(test_data.index[ds_params["window_size"]::3])
+    plt.xticks(train_data[train_data.index >= window_index][window_size:].index[::3])
     
     plt.tight_layout()
     plt.savefig(output_data.get("plot_img_path")) # save as png
