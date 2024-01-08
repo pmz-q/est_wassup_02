@@ -1,18 +1,18 @@
 # merge_data.py 실행하는 경로에 따라 ROOT_PATH 가 변경되어야 합니다.
-ROOT_PATH = '..'
+ROOT_PATH = '../..'
 
-ROOT_DATA_PATH = f'{ROOT_PATH}/data/origin/'
+ROOT_DATA_PATH = f'{ROOT_PATH}/data/'
 TEST_DATA_PATH = f'{ROOT_DATA_PATH}test/'
 TRAIN_DATA_PATH = f'{ROOT_DATA_PATH}train/'
 
-ROOT_FEATURE_PATH = f'{ROOT_PATH}/data/features'
+ROOT_FEATURE_PATH = f'{ROOT_PATH}/features'
 
 
 # config
 data_path_config = {
   'input': {
     'train': {
-      'train': f'{TRAIN_DATA_PATH}train.csv',
+      'train': f'{ROOT_DATA_PATH}train.csv',
       'client': f'{TRAIN_DATA_PATH}client.csv',
       'electricity': f'{TRAIN_DATA_PATH}electricity_prices.csv',
       'forecast_weather': f'{TRAIN_DATA_PATH}forecast_weather.csv',
@@ -20,7 +20,7 @@ data_path_config = {
       'historical_weather': f'{TRAIN_DATA_PATH}historical_weather.csv'
     },
     'test': {
-      'test': f'{TEST_DATA_PATH}test.csv',
+      'test': f'{ROOT_DATA_PATH}test.csv',
       'client': f'{TEST_DATA_PATH}client.csv',
       'electricity': f'{TEST_DATA_PATH}electricity_prices.csv',
       'forecast_weather': f'{TEST_DATA_PATH}forecast_weather.csv',

@@ -14,7 +14,7 @@ TST_INDEX_COL = "prediction_datetime"
 # e.g. predict_unit_id 컬럼에서 값이 0 인 rows
 ROW_QUERY = {
   "prediction_unit_id": 0,
-  "is_consumption": 0
+  "is_consumption": 1
 }
 
 ### DROP_X_COLS 와 USE_X_COLS 중 하나만 적용됩니다.
@@ -25,7 +25,7 @@ DROP_X_COLS = ['currently_scored']
 USE_X_COLS = []
 
 USE_DROP_COLS = True
-USE_ARIMA = False
+USE_ARIMA = True
 
 DROP_COLS_AFTER_MERGE = [
   "county", "is_business", "is_consumption", "product_type",
