@@ -6,7 +6,7 @@ import pandas as pd
 
 def arima(
   df_train: pd.DataFrame, df_test: pd.DataFrame,
-  model_type: Literal["AIRMA", "SARIMA"], arima_parmas: dict
+  model_type: Literal["ARIMA", "SARIMA"], arima_parmas: dict
 ):
   """  
   Returns: (pred, tst_ds)
@@ -19,7 +19,7 @@ def arima(
   if model_type == "SARIMA":
     model = SARIMAX(trn_ds, **arima_parmas)
     pred = model.fit(disp=False).forecast(len(tst_ds))
-  elif model_type == "AIRMA":
+  elif model_type == "ARIMA":
     model = ARIMA(trn_ds, order=arima_parmas.get("order"))
     pred = model.fit().predict(tst_ds.index[0], tst_ds.index[-1], dynamic=True)
   
