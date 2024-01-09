@@ -22,5 +22,8 @@ if __name__ == "__main__":
     create_path_if_not_exists(v, True, '/')
   trn_X.to_csv(output_data.get('train_csv'))
   tst_X.to_csv(output_data.get('test_csv'))
-  joblib.dump(y_scaler, output_data.get('y_scaler_save'))
+  
+  if options.get('y_scaler') != None or options.get('use_arima') == False:
+    joblib.dump(y_scaler, output_data.get('y_scaler_save')) 
+  
   
