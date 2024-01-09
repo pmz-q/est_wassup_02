@@ -57,8 +57,7 @@ class CustomDataset(Dataset):
     # Numeric
     df_num = X_df.select_dtypes(include=["number"])
     # core.utils.preprocess_tools.py
-    self.fill_num_strategy(df_num)
-    a = df_num.isna().sum()
+    df_num = self.fill_num_strategy(df_num)
     df_num.reset_index(drop=True, inplace=True)
     if self.x_scaler is not None or self.y_scaler is not None:
       df_num = pd.DataFrame(self._scale_features(df_num), columns=df_num.columns)

@@ -9,41 +9,43 @@ from torch.nn import ReLU
 ROOT_PATH = get_root_path()
 EXPERIMENT_NAME = "ann_test_1"
 
-TARGET_COL = "target"
-MODEL = ANN
+TEST_SIZE = 24
 
-EPOCHS = 30
-LEARNING_RATE = 0.001
+# train params
+EPOCHS = 5
+LEARNING_RATE = 0.00001
 BATCH_SIZE = 32
+LOSS_FUNC = F.mse_loss
+OPTIM = torch.optim.Adam
+METRIC = F.l1_loss
 
-PRED_SIZE = 5
-WINDOW_SIZE = 32
+# nn params
+MODEL = ANN
+PRED_SIZE = 24
+WINDOW_SIZE = 12
 ACTIVATION_FUNC = ReLU()
 HIDDEN_DIM = [128, 64]
 USE_DROP = True
 DROP_RATIO = 0.3
 
+# scheduler
 USE_SCHEDULER = True
 SCHEDULER = optim.lr_scheduler.CosineAnnealingLR
 SCHEDULER_PARAMS = {
-    "T_max": 20,
-    "eta_min": 0.00001,
+    "T_max": 50,
+    "eta_min": 0.000001,
 }
 
+# early stop
 USE_EARLY_STOP = True
 EARLY_STOP_PARAMS = {
-    "patience_limit": 5 # 몇 번의 epoch까지 지켜볼지를 결정
+    "patience_limit": 20 # 몇 번의 epoch까지 지켜볼지를 결정
 }
-
-LOSS_FUNC = F.mse_loss
-OPTIM = torch.optim.Adam
-METRIC = F.l1_loss
-
 
 config = {
     "input_data": {
         "train_csv": f"{ROOT_PATH}/features/train_X.csv",
-        "test_csv": f"{ROOT_PATH}/features/test_X.csv",
+        # "test_csv": f"{ROOT_PATH}/features/test_X.csv",
         "y_scaler_save": f"{ROOT_PATH}/features/y_scaler.save",
     },
     "output_data": {
@@ -52,6 +54,7 @@ config = {
         "json_path": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}/config.json",
         "output_pred": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}/pred.csv",
     },
+    "test_size": TEST_SIZE,
     "model": MODEL,
     "model_params": {
         "input_dim": WINDOW_SIZE,  # window size
@@ -60,6 +63,7 @@ config = {
         "use_drop": USE_DROP,
         "drop_ratio": DROP_RATIO,
         "activation": ACTIVATION_FUNC,
+        "output_dim": PRED_SIZE
     },
     "train_params": {
         "use_scheduler": USE_SCHEDULER,
@@ -74,7 +78,6 @@ config = {
         "dataset_params": {
             "window_size": WINDOW_SIZE,
             "prediction_size": PRED_SIZE,
-            "target_col": TARGET_COL,
         },
         "data_loader_params": {
             "batch_size": BATCH_SIZE,
