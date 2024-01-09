@@ -101,6 +101,14 @@ class CustomDataset(Dataset):
       tst_df = self._base_preprocess(tst_df)
     else:
       trn_df.fillna(method='ffill', inplace=True)
+      if self.y_scaler != None:
+        y_df = trn_df[[self.target_col]].copy()
+        self.y_scaler.fit(y_df)
+        y_df = pd.DataFrame(
+          self.y_scaler.transform(y_df).astype(dtype=np.float32),
+          columns=self.y_scaler.get_feature_names_out()
+        )
+        trn_df[self.target_col] = y_df[self.target_col].copy()
     
     trn_df.set_index(self.index_col, inplace=True)
     tst_df.set_index(self.index_col, inplace=True)

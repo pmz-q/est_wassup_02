@@ -42,8 +42,8 @@ SCALER = {
   "minmax": MinMaxScaler,
   "maxabs": MaxAbsScaler
 }
-SELECTED_X_SCALER = "minmax" # 사용을 원치 않을 경우, None 값을 넣어주세요.
-SELECTED_Y_SCALER = "minmax" # 사용을 원치 않을 경우, None 값을 넣어주세요.
+SELECTED_X_SCALER = SCALER["minmax"]() # 사용을 원치 않을 경우, None 값을 넣어주세요.
+SELECTED_Y_SCALER = SCALER["minmax"]() # 사용을 원치 않을 경우, None 값을 넣어주세요.
 
 
 config = {
@@ -88,7 +88,7 @@ config = {
     # custom dataset
     "drop_cols_after_merge": DROP_COLS_AFTER_MERGE,
     "fill_num_strategy": FILL_NUM_STRATEGY,
-    "x_scaler": SCALER[SELECTED_X_SCALER](),
-    "y_scaler": SCALER[SELECTED_Y_SCALER](),
+    "x_scaler": SELECTED_X_SCALER,
+    "y_scaler": SELECTED_Y_SCALER,
   },
 }
