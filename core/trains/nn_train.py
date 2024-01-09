@@ -10,7 +10,7 @@ from .nn_validate import test_one_epoch
 def train_one_epoch(dataloader, model, loss_func, optimizer, device):
   model.train()
   total_loss = 0. 
-  for x, y in dataloader:
+  for x, y in dataloader: 
     x, y = x.flatten(1).to(device), y[:,0].unsqueeze(1).to(device) # 2D로 맞춰줌 -> 
     # TODO enefit에서는 y[] index 맞춰줄때 어떤 column을 타겟으로 하는지 확인 필요 
     # y[:,:,0] target_column_index를 받아서 0대신 변수로 넣어줄 수 있음. 
@@ -21,7 +21,7 @@ def train_one_epoch(dataloader, model, loss_func, optimizer, device):
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    total_loss = loss.item()*len(y)
+    total_loss += loss.item()*len(y)
   trn_loss = total_loss/len(dataloader.dataset)
   return trn_loss
 

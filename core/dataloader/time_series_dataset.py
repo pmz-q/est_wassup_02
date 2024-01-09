@@ -9,7 +9,7 @@ class TimeseriesDataset(torch.utils.data.Dataset):
         self.prediction_size = prediction_size # 몇개를 예측할 것인가
 
     def __len__(self):
-        return len(self.data) - self.window_size - self.prediction_size + 1
+        return len(self.data) - self.window_size  #120 - 24 (= 96) - 10 + 1 = 87   -> 96개로 맞추면 됨? 
     
     def __getitem__(self, idx:int):
         x = self.data[idx:(idx+self.window_size)] # 예측을 위해 볼 과거 값들

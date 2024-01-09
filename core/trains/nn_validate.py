@@ -15,9 +15,10 @@ def test_one_epoch(
             pred = model(x)
             loss = loss_func(pred, y)
             metric_value = metric(pred, y)
-            total_loss = loss.item()*len(y)
-            total_metric = metric_value.item()*len(y)
+            total_loss += loss.item()*len(y)
+            total_metric += metric_value.item()*len(y)
     tst_loss = total_loss/len(tst_dl.dataset)
     tst_metric = total_metric/len(tst_dl.dataset)
     pred = pred.cpu().numpy()
+    # pred를 loop마다 받아서 concat해서 마지막에 출력
     return tst_loss, tst_metric, pred  
