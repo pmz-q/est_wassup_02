@@ -12,7 +12,7 @@ EXPERIMENT_NAME = "ann_test_1"
 TARGET_COL = "target"
 MODEL = ANN
 
-EPOCHS = 5
+EPOCHS = 30
 LEARNING_RATE = 0.001
 BATCH_SIZE = 32
 
@@ -23,12 +23,16 @@ HIDDEN_DIM = [128, 64]
 USE_DROP = True
 DROP_RATIO = 0.3
 
-# TODO: scheduler 로직은 미구현 상태
 USE_SCHEDULER = True
 SCHEDULER = optim.lr_scheduler.CosineAnnealingLR
 SCHEDULER_PARAMS = {
-    "T_max": 10,
-    "eta_min": 0.0001,
+    "T_max": 20,
+    "eta_min": 0.00001,
+}
+
+USE_EARLY_STOP = True
+EARLY_STOP_PARAMS = {
+    "patience_limit": 5 # 몇 번의 epoch까지 지켜볼지를 결정
 }
 
 LOSS_FUNC = F.mse_loss
@@ -61,6 +65,8 @@ config = {
         "use_scheduler": USE_SCHEDULER,
         "scheduler_cls": SCHEDULER,
         "scheduler_params": SCHEDULER_PARAMS,
+        "use_early_stop": USE_EARLY_STOP,
+        "early_stop_params": EARLY_STOP_PARAMS,
         "loss": LOSS_FUNC,
         "optim": OPTIM,
         "metric": METRIC,

@@ -7,7 +7,7 @@ from .nn_validate import test_one_epoch
 
 
 # train function for one epoch
-def train_one_epoch(dataloader, model, loss_func, optimizer, device):
+def train_one_epoch(dataloader, model, loss_func, optimizer, device, scheduler):
   model.train()
   total_loss = 0. 
   for x, y in dataloader: 
@@ -23,23 +23,37 @@ def train_one_epoch(dataloader, model, loss_func, optimizer, device):
     optimizer.step()
     total_loss += loss.item()*len(y)
   trn_loss = total_loss/len(dataloader.dataset)
+  if scheduler != None: scheduler.step()
   return trn_loss
 
 def nn_train(
   epochs:int, trn_dl: DataLoader, tst_dl: DataLoader, model: nn.Module,
-  loss: callable, metric: callable, optimizer: Optimizer, device 
+  loss: callable, metric: callable, optimizer: Optimizer, device, 
+  scheduler, use_early_stop: bool, early_stop_params: dict
 ):
+  best_loss = 10 ** 9
+  patience_limit = early_stop_params.get("patience_limit")
+  patience_check = 0
+  
   trn_loss_lst = []
   tst_loss_lst = []
 
   # training and progress bar display
   pbar = trange(epochs)
   for i in pbar: # loop
-    trn_loss = train_one_epoch(trn_dl, model, loss, optimizer, device)
+    trn_loss = train_one_epoch(trn_dl, model, loss, optimizer, device, scheduler)
     tst_loss, tst_metric, pred = test_one_epoch(tst_dl, model, loss, metric, device)
     trn_loss_lst.append(trn_loss)
     tst_loss_lst.append(tst_loss)
     pbar.set_postfix({'trn_mse': trn_loss, 'tst_mse': tst_loss, 'tst_mae': tst_metric})
+
+    # EARLY STOP
+    if use_early_stop and tst_loss > best_loss:
+      patience_check += 1
+      if patience_check >= patience_limit: break
+    else:
+      best_loss = tst_loss
+      patience_check = 0
   
   return trn_loss_lst, tst_loss_lst, pred
   

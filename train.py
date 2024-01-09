@@ -59,12 +59,24 @@ def main(cfg):
     optim_params = train_params.get("optim_params")
     optimizer = Optim(model.parameters(), **optim_params)
 
+    # Learning rate scheduler
+    LRScheduler = train_params.get("scheduler_cls") 
+    scheduler_params = train_params.get("scheduler_params")
+    use_scheduler = train_params.get("use_scheduler")
+    scheduler = None
+    if use_scheduler:
+        scheduler = LRScheduler(optimizer, **scheduler_params)
+
+    # Early stop
+    use_early_stop = train_params.get("use_early_stop")
+    early_stop_params = train_params.get("early_stop_params")
+
     loss = train_params.get("loss") # Loss function 
     metric = train_params.get("metric")
     epochs = train_params.get("epochs")
     
     # TRAIN
-    trn_loss_lst, tst_loss_lst, pred = nn_train(epochs, trn_dl, tst_dl, model, loss, metric, optimizer, device)
+    trn_loss_lst, tst_loss_lst, pred = nn_train(epochs, trn_dl, tst_dl, model, loss, metric, optimizer, device, scheduler, use_early_stop, early_stop_params)
 
     # Save pre-trained weight  -> 재현 용 (저장은 해두기)
     output_data = cfg.get("output_data")
