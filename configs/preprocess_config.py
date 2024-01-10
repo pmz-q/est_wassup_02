@@ -1,4 +1,4 @@
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from core.utils import get_root_path, fill_num_strategy
 
 
@@ -29,9 +29,9 @@ USE_ARIMA = False
 
 DROP_COLS_AFTER_MERGE = [
   "county", "is_business", "is_consumption", "product_type", # "data_block_id", 
-  "row_id", "date", "date_client", "forecast_date_electricity",
+  "row_id", "date", "date_client", # "forecast_date_electricity",
   "origin_date_electricity", "forecast_date_gas", "origin_date_gas", "prediction_unit_id",
-  "year", "quarter", "month", "week", "hour",
+  "year", "quarter", "month", "week",  "day", "hour",
   "day_of_year", "day_of_month", "day_of_week", "eic_count_client",
   "installed_capacity_client", "temperature_h_mean", 
   "dewpoint_h_mean",
@@ -59,7 +59,8 @@ FILL_NUM_STRATEGY = fill_num_strategy("custom_mean")
 SCALER = {
   "standard": StandardScaler,
   "minmax": MinMaxScaler,
-  "maxabs": MaxAbsScaler
+  "maxabs": MaxAbsScaler,
+  "robust": RobustScaler,
 }
 SELECTED_X_SCALER = SCALER["minmax"]() # 사용을 원치 않을 경우, None 값을 넣어주세요.
 SELECTED_Y_SCALER = SCALER["minmax"]() # 사용을 원치 않을 경우, None 값을 넣어주세요.
