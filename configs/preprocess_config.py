@@ -25,16 +25,16 @@ DROP_X_COLS = ['currently_scored']
 USE_X_COLS = []
 
 USE_DROP_COLS = True
-USE_ARIMA = True
+USE_ARIMA = False
 
 DROP_COLS_AFTER_MERGE = [
-  "county", "is_business", "is_consumption", "product_type",
-  "data_block_id", "row_id", "date", "date_client", "forecast_date_electricity",
+  "county", "is_business", "is_consumption", "product_type", # "data_block_id", 
+  "row_id", "date", "date_client", "forecast_date_electricity",
   "origin_date_electricity", "forecast_date_gas", "origin_date_gas", "prediction_unit_id"
 ]
 
-# choose one: ['min', 'mean', 'max']
-FILL_NUM_STRATEGY = fill_num_strategy("mean")
+# choose one: ['min', 'mean', 'max', 'custom_mean']
+FILL_NUM_STRATEGY = fill_num_strategy("custom_mean")
 
 # Custom scaler 의 경우, class 를 생성하여 사용해주세요.
 SCALER = {

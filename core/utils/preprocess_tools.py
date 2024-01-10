@@ -31,18 +31,16 @@ def custom_mean(df: pd.DataFrame):
                 after_value = df.iloc[calculated_index][column]
                 mean_value = (before_value + after_value) / 2
                 df.at[index, column] = mean_value
-    # df = df[df['data_block_id']>1]
-
     return df
 
 
 def fill_num_strategy(strategy: Literal["min", "max", "mean", "custom_mean"]) -> callable:
   def fill_num(df_num: pd.DataFrame) -> None:
     df = df_num.copy()
-    # df.fillna(0)
     if strategy == "custom_mean":
         df_num = custom_mean(df)
     else:
+        df.fillna(0, inplace=True)
         if strategy == "mean":
             fill_values = df.mean(axis=0)
         elif strategy == "min":
@@ -50,6 +48,5 @@ def fill_num_strategy(strategy: Literal["min", "max", "mean", "custom_mean"]) ->
         elif strategy == "max":
             fill_values = df.max(axis=0)
         df_num = df_num.fillna(fill_values)
-
     return df_num
   return fill_num

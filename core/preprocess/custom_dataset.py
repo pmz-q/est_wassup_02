@@ -52,13 +52,14 @@ class CustomDataset(Dataset):
       return new_df
 
   def _base_preprocess(self, X_df: pd.DataFrame):
-    idx = X_df.index
-    
     # Numeric
     df_num = X_df.select_dtypes(include=["number"])
     # core.utils.preprocess_tools.py
     df_num = self.fill_num_strategy(df_num)
     df_num.reset_index(drop=True, inplace=True)
+    
+    drop_block_id_len = df_num[df_num['data_block_id'] <= 1].shape[0]
+    df_num.drop(columns=['data_block_id'], inplace=True)
     if self.x_scaler is not None or self.y_scaler is not None:
       df_num = pd.DataFrame(self._scale_features(df_num), columns=df_num.columns)
 
@@ -76,8 +77,8 @@ class CustomDataset(Dataset):
     # ).reset_index(drop=True)
 
     new_df = pd.concat([df_num, df_cat], axis=1)
-    new_df.fillna(0)
-    new_df.set_index(idx, inplace=True)
+    new_df.set_index(self.index_col, inplace=True)
+    new_df = new_df.iloc[drop_block_id_len:,:]
     return new_df
 
   def preprocess(self):
@@ -108,9 +109,8 @@ class CustomDataset(Dataset):
           columns=self.y_scaler.get_feature_names_out()
         )
         trn_df[self.target_col] = y_df[self.target_col].copy()
-    
-    trn_df.set_index(self.index_col, inplace=True)
-    tst_df.set_index(self.index_col, inplace=True)
+        trn_df.set_index(self.index_col, inplace=True)
+        tst_df.set_index(self.index_col, inplace=True)
 
     print(trn_df.shape)
     print(tst_df.shape)
