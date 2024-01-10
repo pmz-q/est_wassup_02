@@ -4,7 +4,8 @@ from .merge import (
   merge_electricity_prices,
   merge_gas_prices,
   merge_forecast_weather,
-  merge_historical_weather
+  merge_historical_weather,
+  merge_holidays
 )
 
 
@@ -17,6 +18,7 @@ def create_data_features(X_df: pd.DataFrame):
   
   # Time period features
   X_df['date'] = X_df['datetime'].dt.normalize()
+  X_df['day'] = X_df['datetime'].dt.day
   X_df['year'] = X_df['datetime'].dt.year
   X_df['quarter'] = X_df['datetime'].dt.quarter
   X_df['month'] = X_df['datetime'].dt.month
@@ -49,6 +51,8 @@ def merge(X_df: pd.DataFrame, add_data: dict, county_mapper: pd.DataFrame) -> pd
     except KeyError:
       print(f"[merge_dataset.py]-{csv_name} function unavailable.")
   
+  df = merge_holidays(df)
+  
   return df
 
 def merge_dataset(X_df_train: pd.DataFrame, X_df_test: pd.DataFrame, add_data: dict):
@@ -57,5 +61,5 @@ def merge_dataset(X_df_train: pd.DataFrame, X_df_test: pd.DataFrame, add_data: d
   """
   merged_train_df = merge(X_df_train, add_data['train'], add_data['county_mapper']['county_mapper'])
   merged_test_df = merge(X_df_test, add_data['test'], add_data['county_mapper']['county_mapper'])
-  
+
   return (merged_train_df, merged_test_df)

@@ -1,5 +1,6 @@
 torch
 torchmetrics
+holidays
 jsonpickle
 joblib
 jsonschema

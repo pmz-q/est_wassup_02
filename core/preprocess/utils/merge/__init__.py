@@ -3,3 +3,4 @@ from .merge_forecast_weather import merge_forecast_weather
 from .merge_electricity_prices import merge_electricity_prices
 from .merge_gas_prices import merge_gas_prices
 from .merge_client import merge_client
+from .merge_holidays import merge_holidays
