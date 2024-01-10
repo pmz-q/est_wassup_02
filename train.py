@@ -24,15 +24,18 @@ def main(cfg):
     prediction_size = model_params.get("output_dim")
     test_size = cfg.get("test_size") # 96
 
+
     ## split dataset
     # trn & val data
-    trn_ds = train_data[:-test_size*2].to_numpy(dtype=np.float32) # 
+    trn_ds = train_data[:-test_size*2].to_numpy(dtype=np.float32)
     val_ds = train_data[-window_size-test_size*2:-test_size].to_numpy(dtype=np.float32) # 96 step + 24 step = 120 steps
+    
     # test data
     tst_ds_y = train_data[-test_size:]['target'].copy()
     tst_df = train_data[-window_size-test_size:].copy()
     tst_df['target'][-test_size:] = np.nan
     tst_ds = tst_df.to_numpy(dtype=np.float32) # 96 step + 24 step = 120 steps
+    
     print("trn.shape:", trn_ds.shape)
     print("val.shape:", val_ds.shape)
     print("tst.shape:", tst_ds.shape)
@@ -103,7 +106,7 @@ def main(cfg):
     # retrieve from test dataloader
     pred = nn_predict(tst_dl, model, test_size, prediction_size, window_size, device)
 
-    ## Inverse scaling
+    # inverse scaling
     y_scaler = None
     try:
         y_scaler = joblib.load(input_data.get("y_scaler_save"))
@@ -122,12 +125,13 @@ def main(cfg):
     pred_df = pd.DataFrame({'prediction': p})
     pred_df.to_csv(output_data.get("output_pred"))
 
+
     ### Visualization with Results ###
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize = (10, 8))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
     
     # Plotting the losses
-    ax1.plot(range(len(trn_loss_lst)), trn_loss_lst, label='Training Loss')
-    ax1.plot(range(len(val_loss_lst)), val_loss_lst, label='Validation Loss')
+    ax1.plot(range(1,len(trn_loss_lst)+1), trn_loss_lst, label='Training Loss')
+    ax1.plot(range(1,len(val_loss_lst)+1), val_loss_lst, label='Validation Loss')
     ax1.set_title(f"{Model}, last train loss: {trn_loss_lst[-1]:.6f}, last valiadtion loss: {val_loss_lst[-1]:.6f}")
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
@@ -138,8 +142,8 @@ def main(cfg):
     ax2.plot(tst_ds_y.index, p, label="Prediction")
     ax2.set_title(f"{Model}, MAPE:{mape(p,y):.4f}, MAE:{mae(p,y):.4f}, R2:{r2_score(p,y):.4f}")
     ax2.legend()
-    plt.gcf().autofmt_xdate()
-    date_format = mdates.DateFormatter('%m-%d %H')
+    plt.setp(ax2.get_xticklabels(), rotation=45, ha="right")
+    date_format = mdates.DateFormatter('%Y-%m-%d %H')
     ax2.xaxis.set_major_formatter(date_format)
     plt.xticks(tst_ds_y.index[::3])
     

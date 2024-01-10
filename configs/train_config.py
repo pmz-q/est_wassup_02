@@ -12,7 +12,7 @@ EXPERIMENT_NAME = "ann_test_1"
 TEST_SIZE = 24
 
 # train params
-EPOCHS = 5
+EPOCHS = 40
 LEARNING_RATE = 0.00001
 BATCH_SIZE = 32
 LOSS_FUNC = F.mse_loss
@@ -27,9 +27,11 @@ ACTIVATION_FUNC = ReLU()
 HIDDEN_DIM = [128, 64]
 USE_DROP = True
 DROP_RATIO = 0.3
+OUTPUT_FUNC = F.sigmoid # Y scaler 에 따라서 변경되어야 함
+# y scaler 가 None 인 경우, lambda x: x 이렇게 넣어주면 됨.
 
 # scheduler
-USE_SCHEDULER = True
+USE_SCHEDULER = False
 SCHEDULER = optim.lr_scheduler.CosineAnnealingLR
 SCHEDULER_PARAMS = {
     "T_max": 50,
@@ -63,7 +65,8 @@ config = {
         "use_drop": USE_DROP,
         "drop_ratio": DROP_RATIO,
         "activation": ACTIVATION_FUNC,
-        "output_dim": PRED_SIZE
+        "output_dim": PRED_SIZE,
+        "output_func": OUTPUT_FUNC
     },
     "train_params": {
         "use_scheduler": USE_SCHEDULER,
