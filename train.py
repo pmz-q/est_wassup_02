@@ -1,7 +1,12 @@
 from core.dataloader import TimeseriesDataset
 from core.metrics import mae, mape, r2_score
 from core.trains import nn_train, nn_predict
-from core.utils import create_path_if_not_exists, save_params_json, get_args_parser
+from core.utils import (
+    create_path_if_not_exists,
+    save_params_json,
+    get_args_parser,
+    combine_paths
+)
 import pandas as pd
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -97,9 +102,9 @@ def main(cfg):
 
     ## save pre-trained weight
     output_data = cfg.get("output_data")
-    create_path_if_not_exists(output_data.get("output_train"))
-    torch.save(model.state_dict(), output_data.get("output_train"))
-    save_params_json(output_data.get("json_path"), cfg)
+    root_dir = create_path_if_not_exists(output_data.get("root_dir"), remove_filename=False)
+    torch.save(model.state_dict(), combine_paths(root_dir, output_data.get('output_train')))
+    save_params_json(combine_paths(root_dir, output_data.get("json_path")), cfg)
 
 
     ## Prediction
@@ -123,7 +128,7 @@ def main(cfg):
     print("p-shape:", p.shape)
 
     pred_df = pd.DataFrame({'prediction': p})
-    pred_df.to_csv(output_data.get("output_pred"))
+    pred_df.to_csv(combine_paths(root_dir, output_data.get("output_pred")))
 
 
     ### Visualization with Results ###
@@ -148,7 +153,7 @@ def main(cfg):
     plt.xticks(tst_ds_y.index[::3])
     
     plt.tight_layout()
-    plt.savefig(output_data.get("plot_img_path")) # save as png
+    plt.savefig(combine_paths(root_dir, output_data.get("plot_img_path"))) # save as png
     
     
 if __name__ == "__main__":

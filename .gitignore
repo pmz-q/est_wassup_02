@@ -4,6 +4,10 @@
 *.pth
 *.json
 *.png
+auto-configs-arima/*
+auto-configs-nn/*
+auto-configs-tst/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
