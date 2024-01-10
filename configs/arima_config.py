@@ -16,10 +16,11 @@ config = {
     "test_csv": f"{ROOT_PATH}/features/test_X.csv",
   },
   "output_data": {
-    "plot_img_path": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}/output.png",
-    "json_path": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}/output.json",
-    "pred_save_path": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}/pred_save.csv",
-    "actual_save_path": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}/actual_save.csv",
+    "root_dir": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}",
+    "plot_img_path": "output.png",
+    "json_path": "output.json",
+    "pred_save_path": "pred_save.csv",
+    "actual_save_path": "actual_save.csv",
   },
   "arima_model": ARIMA_MODEL,
   "arima_params":{

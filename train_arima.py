@@ -1,15 +1,16 @@
 from core.metrics import mae, mape, r2_score
 from core.trains import arima
-from core.utils import get_args_parser, create_path_if_not_exists, save_params_json
+from core.utils import (
+    get_args_parser,
+    create_path_if_not_exists,
+    save_params_json,
+    combine_paths
+)
 import matplotlib.pyplot as plt
 import pandas as pd
 
 
-if __name__ == "__main__":
-    args = get_args_parser(config_type="train_arima").parse_args()
-    config = {}
-    exec(open(args.config, encoding="utf-8").read())
-
+def main(config):
     # get preprocessed csv files
     input_data = config.get("input_data")
     df_train = pd.read_csv(input_data.get("train_csv"), index_col=0)
@@ -32,11 +33,11 @@ if __name__ == "__main__":
     
     pred_save_path = output_data.get("pred_save_path")
     actual_save_path = output_data.get("actual_save_path")
-    create_path_if_not_exists(pred_save_path)
-    pd.DataFrame(pred).to_csv(pred_save_path)
-    tst_ds.to_csv(actual_save_path)
+    root_dir = create_path_if_not_exists(output_data.get("root_dir"), remove_filename=False)
+    pd.DataFrame(pred).to_csv(combine_paths(root_dir, pred_save_path))
+    tst_ds.to_csv(combine_paths(root_dir, actual_save_path))
 
-    plot_img_path = output_data.get("plot_img_path")
+    plot_img_path = combine_paths(root_dir, output_data.get("plot_img_path"))
 
     plt.figure(figsize=(20, 10))
     plt.plot(tst_ds.index, tst_ds.values, pred.index, pred.values)
@@ -46,5 +47,12 @@ if __name__ == "__main__":
     plt.savefig(plot_img_path)  # save as png
 
     # Save parameters
-    json_path = output_data.get("json_path")
+    json_path = combine_paths(root_dir, output_data.get("json_path"))
     save_params_json(json_path, object_to_save=config, pickle=False)
+
+if __name__ == "__main__":
+    args = get_args_parser(config_type="train_arima").parse_args()
+    config = {}
+    exec(open(args.config, encoding="utf-8").read())
+    main(config)
+    print("finished! Please check the output folder.")
