@@ -56,8 +56,7 @@ def main(cfg):
 
     # test
     tst_ds = PatchTSTDataset(tst_ds.flatten(), **ds_params)
-    tst_dl = DataLoader(tst_ds, shuffle=False, batch_size=len(tst_ds))    
-    # print(len(tst_ds))
+    tst_dl = DataLoader(tst_ds, shuffle=False, batch_size=len(tst_ds))
     
     # Model
     # model_params = cfg.get("model_params")
@@ -79,7 +78,6 @@ def main(cfg):
     # TRAIN
     trn_loss_lst, tst_loss_lst, pred = tst_train(epochs, trn_dl, tst_dl, model, loss, metric, optimizer, device)
     print(pred.shape)
-    print(pred)
     # Save pre-trained weight  -> 재현 용 (저장은 해두기)
     output_data = cfg.get("output_data")
     create_path_if_not_exists(output_data.get("output_train"))
@@ -103,16 +101,14 @@ def main(cfg):
         # y = y/scaler.scale_[0] + scaler.min_[0] # inverse scaling
         # p = pred/scaler.scale_[0] + scaler.min_[0] # inverse scaling
 
-    y = y
-    p = pred 
-    # y = np.concatenate([y[:,0], y[-1,1:]]) # true 
-    # p = np.concatenate([p[:,0], p[-1,1:]]) # prediction
+    y = np.concatenate([y[:,0], y[-1,1:]]) # true 
+    p = np.concatenate([p[:,0], p[-1,1:]]) # prediction
     print(y.shape)
     print(p.shape)
 
     # print(p)
     pred_df = pd.DataFrame({'prediction': p})
-    pred_df.to_csv(output_data.get("pred_output"))
+    pred_df.to_csv(output_data.get("output_pred"))
     # TODO: submission 파일에 pred 넣기
 
     ### Visualization with Results ###
