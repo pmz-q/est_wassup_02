@@ -1,0 +1,11 @@
+torch
+torchmetrics
+holidays
+jsonpickle
+joblib
+jsonschema
+matplotlib
+numpy
+pandas
+scikit-learn
+tqdm

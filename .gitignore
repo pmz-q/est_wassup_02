@@ -1,3 +1,14 @@
+# custom ignore
+*.csv
+*.save
+*.pth
+*.json
+*.png
+auto-configs-arima/*.py
+auto-configs-nn/*.py
+auto-configs-tst/*.py
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
