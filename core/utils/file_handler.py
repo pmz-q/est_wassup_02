@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import json
 import jsonpickle
-from typing import Literal
+from typing import Literal, List
 
 
 ROOT_PATH = Path(__file__).parent.parent.parent
@@ -17,14 +17,14 @@ def get_root_path() -> str:
 def get_absolute_path(path: str) -> str:
   return os.path.abspath(path)
 
-def get_list_of_csv_files(absolute_dir_path: str, extension: str='.csv') -> list[str]:
+def get_list_of_csv_files(absolute_dir_path: str, extension: str='.csv') -> List[str]:
   csv_files = {}
   for file_name in os.listdir(absolute_dir_path):
     if file_name.count(extension):
       csv_files[file_name.replace(extension, f'_{extension}')] = file_name
   return csv_files
 
-def get_list_of_auto_configs(config_type: Literal["arima", "nn", "tst"]) -> list[str]:
+def get_list_of_auto_configs(config_type: Literal["arima", "nn", "tst"]) -> List[str]:
   config_files = []
   file_dir = f"{get_root_path()}/auto-configs-{config_type}"
   for file_name in os.listdir(file_dir):
@@ -32,14 +32,14 @@ def get_list_of_auto_configs(config_type: Literal["arima", "nn", "tst"]) -> list
       config_files.append(f"{file_dir}/{file_name}")
   return config_files
 
-def create_path_if_not_exists(path: str, remove_filename: bool=True, split_by: str='/') -> str:
+def create_path_if_not_exists(path: str, remove_filename: bool=True, split_by: str='/', create_new_path: bool=True) -> str:
   """
   Returns:
       str: file path
   """
   if remove_filename:
     path = get_dirs_only(path, split_by)
-  if os.path.exists(path):
+  if os.path.exists(path) and create_new_path:
     path = f"{path}_1"
   os.makedirs(path, exist_ok=True)
   return path
