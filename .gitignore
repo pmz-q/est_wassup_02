@@ -4,9 +4,9 @@
 *.pth
 *.json
 *.png
-auto-configs-arima/*
-auto-configs-nn/*
-auto-configs-tst/*
+auto-configs-arima/*.py
+auto-configs-nn/*.py
+auto-configs-tst/*.py
 
 
 # Byte-compiled / optimized / DLL files
