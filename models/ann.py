@@ -11,7 +11,8 @@ class ANN(nn.Module):
     activation: callable=F.relu,
     use_drop:bool = True,
     drop_ratio: float=0.0,
-    output_dim: int=1 # prediction = 1
+    output_dim: int=1, # prediction = 1
+    output_func: callable=lambda x:x
   ):
     super().__init__()
     dims = [input_dim*input_channel] + hidden_dim
@@ -21,11 +22,12 @@ class ANN(nn.Module):
     model = [[nn.Linear(dims[i], dims[i+1]), self.dropout if use_drop else self.identity, self.activation] for i in range(len(dims) - 1)]
     output_layer = [nn.Linear(dims[-1], output_dim)]
     self.module_list= nn.ModuleList(sum(model, []) + output_layer)
+    self.output_func = output_func
   
   def forward(self, x):
     for layer in self.module_list:
          x = layer(x)
-    return F.sigmoid(x)
+    return self.output_func(x)
   
 
 

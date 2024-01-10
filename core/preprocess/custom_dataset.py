@@ -108,7 +108,7 @@ class CustomDataset(Dataset):
           self.y_scaler.transform(y_df).astype(dtype=np.float32),
           columns=self.y_scaler.get_feature_names_out()
         )
-        trn_df[self.target_col] = y_df[self.target_col].copy()
+        trn_df[self.target_col] = y_df[self.target_col].values
         trn_df.set_index(self.index_col, inplace=True)
         tst_df.set_index(self.index_col, inplace=True)
 
