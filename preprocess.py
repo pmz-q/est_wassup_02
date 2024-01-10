@@ -19,7 +19,7 @@ if __name__ == "__main__":
   ).preprocess()
   
   for k,v in output_data.items():
-    create_path_if_not_exists(v, True, '/')
+    create_path_if_not_exists(v, True, '/', create_new_path=False)
   trn_X.to_csv(output_data.get('train_csv'))
   tst_X.to_csv(output_data.get('test_csv'))
   
