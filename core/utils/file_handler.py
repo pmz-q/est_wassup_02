@@ -47,7 +47,11 @@ def create_path_if_not_exists(path: str, remove_filename: bool=True, split_by: s
   os.makedirs(new_path, exist_ok=True)
   return new_path
 
-def combine_paths(dir: str, filename: str):
+def delete_file_if_exists(file_path: str) -> None:
+  if os.path.exists(file_path):
+    os.remove(file_path)
+
+def combine_paths(dir: str, filename: str) -> str:
   return f"{dir}/{filename}"
 
 def get_dirs_only(path: str, split_by: str='/') -> str:
