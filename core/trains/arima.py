@@ -5,22 +5,20 @@ import pandas as pd
 
 
 def arima(
-  df_train: pd.DataFrame, df_test: pd.DataFrame,
+  trn_ds: pd.DataFrame, test_size: int, 
+  predict_start_date: str, predict_end_date: str,
   model_type: Literal["ARIMA", "SARIMA"], arima_parmas: dict
 ):
   """  
-  Returns: (pred, tst_ds)
+  Returns: pred
   """
-  trn_ds = df_train[df_train.index < df_test.index[0]]
-  tst_ds = df_train[df_train.index >= df_test.index[0]]
   trn_ds.index.freq = trn_ds.index.inferred_freq
-  tst_ds.index.freq = tst_ds.index.inferred_freq  
 
   if model_type == "SARIMA":
     model = SARIMAX(trn_ds, **arima_parmas)
-    pred = model.fit(disp=False).forecast(len(tst_ds))
+    pred = model.fit(disp=False).forecast(test_size)
   elif model_type == "ARIMA":
     model = ARIMA(trn_ds, order=arima_parmas.get("order"))
-    pred = model.fit().predict(tst_ds.index[0], tst_ds.index[-1], dynamic=True)
+    pred = model.fit().predict(predict_start_date, predict_end_date, dynamic=True)
   
-  return pred, tst_ds
+  return pred
