@@ -23,11 +23,17 @@ if __name__ == "__main__":
     
     config = {}
     exec(open(parser.parse_args().config).read())
+
+    print()
+    print("=============================================="*2)
+    print(f"[{idx}][start][{cfg_file}]")
+    print("=============================================="*2)
+    print()
     main(TYPE, config)
     print()
     print("=============================================="*2)
-    print(f"[{idx}][{cfg_file}]")
+    print(f"[{idx}][end][{cfg_file}]")
     print("=============================================="*2)
     print()
   
-  print("FINISHED!")
+  print("ALL FINISHED!")
