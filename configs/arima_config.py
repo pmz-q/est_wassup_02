@@ -2,7 +2,8 @@ from core.utils import get_root_path
 
 
 ROOT_PATH = get_root_path()
-EXPERIMENT_NAME = "arima_test_1"
+EXPERIMENT_NAME = "arima_test_scale3"
+TEST_SIZE = 24
 
 ARIMA_MODEL = "ARIMA" # ARIMA or SARIMA
 ORDER = (25, 1, 0) # p, d, q
@@ -14,6 +15,7 @@ config = {
   "input_data": {
     "train_csv": f"{ROOT_PATH}/features/train_X.csv",
     "test_csv": f"{ROOT_PATH}/features/test_X.csv",
+    "y_scaler_save": f"{ROOT_PATH}/features/y_scaler.save",
   },
   "output_data": {
     "root_dir": f"{ROOT_PATH}/output/{EXPERIMENT_NAME}",
@@ -22,6 +24,7 @@ config = {
     "pred_save_path": "pred_save.csv",
     "actual_save_path": "actual_save.csv",
   },
+  "test_size": TEST_SIZE, 
   "arima_model": ARIMA_MODEL,
   "arima_params":{
     "order": ORDER,
