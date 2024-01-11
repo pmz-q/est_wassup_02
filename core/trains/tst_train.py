@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 from torch import nn
 from torch.optim import Optimizer
 from .tst_validate import validate_one_epoch
+from ..utils import SaveBestModel
 
 
 
@@ -25,9 +26,9 @@ def train_one_epoch(dataloader, model, loss_func, optimizer, device, scheduler):
 def tst_train(
   epochs:int, trn_dl: DataLoader, val_dl: DataLoader, model: nn.Module,
   loss: callable, metric: callable, optimizer: Optimizer, device,
-  scheduler, use_early_stop: bool, early_stop_params: dict
+  scheduler, use_early_stop: bool, early_stop_params: dict, save_best_model: SaveBestModel
 ):
-  best_loss = 10 ** 9
+  best_loss = float("inf")
   patience_limit = early_stop_params.get("patience_limit")
   patience_check = 0
   
@@ -42,6 +43,9 @@ def tst_train(
     trn_loss_lst.append(trn_loss)
     val_loss_lst.append(val_loss)
     pbar.set_postfix({'trn_mse': trn_loss, 'val_mse': val_loss, 'val_mae': val_metric})
+  
+    # save best model
+    save_best_model(val_loss, model)
   
     # EARLY STOP
     if use_early_stop and val_loss > best_loss:

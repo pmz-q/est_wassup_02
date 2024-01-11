@@ -59,6 +59,7 @@ config = {
         "plot_img_path": "output.png",
         "json_path": "config.json",
         "output_pred": "pred.csv",
+        "output_best_train": "best_model.pth"
     },
     "test_size": TEST_SIZE,
     "window_size": int(PATCH_LENGTH*N_PATCHES/2),

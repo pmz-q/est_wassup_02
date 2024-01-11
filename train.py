@@ -113,7 +113,7 @@ def main(cfg):
     torch.save(model.state_dict(), final_model_save_path)
     save_params_json(combine_paths(root_dir, output_data.get("json_path")), cfg)
 
-    
+
     ## load models
     # final model
     model = Model(**{**model_params, "input_channel": n_featues}).to(device)
@@ -177,7 +177,7 @@ def main(cfg):
     # Visualize results - true, pred with metrics  
     ax3.plot(tst_ds_y.index, y, label="True")
     ax3.plot(tst_ds_y.index, p_best_model, label="Prediction")
-    ax3.set_title(f"Best model, MAPE:{mape(p_best_model,y):.4f}, MAE:{mae(p_best_model,y):.4f}, R2:{r2_score(p_best_model,y):.4f}")
+    ax3.set_title(f"Best model: {Model}, MAPE:{mape(p_best_model,y):.4f}, MAE:{mae(p_best_model,y):.4f}, R2:{r2_score(p_best_model,y):.4f}")
     ax3.legend()
     plt.setp(ax3.get_xticklabels(), rotation=45, ha="right")
     date_format = mdates.DateFormatter('%Y-%m-%d %H')
