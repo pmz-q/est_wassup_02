@@ -5,7 +5,8 @@ from core.utils import (
     create_path_if_not_exists,
     save_params_json,
     get_args_parser,
-    combine_paths
+    combine_paths,
+    SaveBestModel
 )
 import pandas as pd
 import matplotlib.dates as mdates
@@ -96,20 +97,38 @@ def main(cfg):
     epochs = train_params.get("epochs")
     
     
+    ## best model saver initializer
+    output_data = cfg.get("output_data")
+    root_dir = create_path_if_not_exists(output_data.get("root_dir"), remove_filename=False)
+    best_model_save_path = combine_paths(root_dir, output_data.get("output_best_train"))
+    best_model_saver = SaveBestModel(best_model_save_path)
+    
+    
     ## TRAIN
-    trn_loss_lst, val_loss_lst = nn_train(epochs, trn_dl, val_dl, model, loss, metric, optimizer, device, scheduler, use_early_stop, early_stop_params)
+    trn_loss_lst, val_loss_lst = nn_train(epochs, trn_dl, val_dl, model, loss, metric, optimizer, device, scheduler, use_early_stop, early_stop_params, best_model_saver)
 
 
     ## save pre-trained weight
-    output_data = cfg.get("output_data")
-    root_dir = create_path_if_not_exists(output_data.get("root_dir"), remove_filename=False)
-    torch.save(model.state_dict(), combine_paths(root_dir, output_data.get('output_train')))
+    final_model_save_path = combine_paths(root_dir, output_data.get('output_train'))
+    torch.save(model.state_dict(), final_model_save_path)
     save_params_json(combine_paths(root_dir, output_data.get("json_path")), cfg)
 
-
+    
+    ## load models
+    # final model
+    model = Model(**{**model_params, "input_channel": n_featues}).to(device)
+    model.load_state_dict(torch.load(final_model_save_path))
+    model.eval()
+    # best model
+    best_model = Model(**{**model_params, "input_channel": n_featues}).to(device)
+    best_model.load_state_dict(torch.load(best_model_save_path))
+    best_model.eval()
+    
+    
     ## Prediction
     # retrieve from test dataloader
     pred = nn_predict(tst_dl, model, test_size, prediction_size, window_size, device)
+    pred_best_model = nn_predict(tst_dl, best_model, test_size, prediction_size, window_size, device)
 
     # inverse scaling
     y_scaler = None
@@ -121,18 +140,21 @@ def main(cfg):
     if y_scaler != None:
         y = y_scaler.inverse_transform(pd.DataFrame(tst_ds_y))
         p = y_scaler.inverse_transform([pred])
+        p_best_model = y_scaler.inverse_transform([pred_best_model])
 
     y = np.concatenate([y[:,0], y[-1,1:]]) # true 
     p = np.concatenate([p[:,0], p[-1,1:]]) # prediction
+    p_best_model = np.concatenate([p_best_model[:,0], p_best_model[-1,1:]]) # prediction
     print("y-shape:", y.shape)
     print("p-shape:", p.shape)
+    print("b-shape:", p_best_model.shape)
 
     pred_df = pd.DataFrame({'prediction': p})
     pred_df.to_csv(combine_paths(root_dir, output_data.get("output_pred")))
 
 
     ### Visualization with Results ###
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 8))
     
     # Plotting the losses
     ax1.plot(range(1,len(trn_loss_lst)+1), trn_loss_lst, label='Training Loss')
@@ -150,6 +172,16 @@ def main(cfg):
     plt.setp(ax2.get_xticklabels(), rotation=45, ha="right")
     date_format = mdates.DateFormatter('%Y-%m-%d %H')
     ax2.xaxis.set_major_formatter(date_format)
+    plt.xticks(tst_ds_y.index[::3])
+    
+    # Visualize results - true, pred with metrics  
+    ax3.plot(tst_ds_y.index, y, label="True")
+    ax3.plot(tst_ds_y.index, p_best_model, label="Prediction")
+    ax3.set_title(f"Best model, MAPE:{mape(p_best_model,y):.4f}, MAE:{mae(p_best_model,y):.4f}, R2:{r2_score(p_best_model,y):.4f}")
+    ax3.legend()
+    plt.setp(ax3.get_xticklabels(), rotation=45, ha="right")
+    date_format = mdates.DateFormatter('%Y-%m-%d %H')
+    ax3.xaxis.set_major_formatter(date_format)
     plt.xticks(tst_ds_y.index[::3])
     
     plt.tight_layout()
