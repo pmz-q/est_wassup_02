@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 import joblib
+import random
 
 
 # PatchTST: train & test together
@@ -203,6 +204,17 @@ def main(cfg):
 
 
 if __name__ == "__main__":
+    seed = 2023
+    deterministic = True
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    if deterministic:
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    
     args = get_args_parser(config_type='train_patchtst').parse_args()
     config = {}
     exec(open(args.config).read())
