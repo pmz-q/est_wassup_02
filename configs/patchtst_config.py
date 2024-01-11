@@ -1,5 +1,5 @@
 from core.utils import get_root_path
-from models.patch_tst import PatchTST   #### TODO 선들님께 models로 from찍으면 안 되는거 물어보기...
+from models import PatchTST
 import torch
 from torch import optim
 import torch.nn.functional as F
@@ -59,6 +59,7 @@ config = {
         "plot_img_path": "output.png",
         "json_path": "config.json",
         "output_pred": "pred.csv",
+        "output_best_train": "best_model.pth"
     },
     "test_size": TEST_SIZE,
     "window_size": int(PATCH_LENGTH*N_PATCHES/2),
