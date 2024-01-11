@@ -12,7 +12,7 @@ EXPERIMENT_NAME = "ann_test_1"
 TEST_SIZE = 24
 
 # train params
-EPOCHS = 40
+EPOCHS = 30
 LEARNING_RATE = 0.00001
 BATCH_SIZE = 32
 LOSS_FUNC = F.mse_loss
@@ -56,6 +56,7 @@ config = {
         "plot_img_path": "output.png",
         "json_path": "config.json",
         "output_pred": "pred.csv",
+        "output_best_train": "best_model.pth"
     },
     "test_size": TEST_SIZE,
     "model": MODEL,
