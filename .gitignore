@@ -4,9 +4,12 @@
 *.pth
 *.json
 *.png
-auto-configs-arima/*.py
-auto-configs-nn/*.py
-auto-configs-tst/*.py
+!auto-configs-arima/.gitkepp
+!auto-configs-nn/.gitkepp
+!auto-configs-tst/.gitkepp
+auto-configs-arima/*
+auto-configs-nn/*
+auto-configs-tst/*
 
 
 # Byte-compiled / optimized / DLL files
