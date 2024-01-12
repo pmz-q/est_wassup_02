@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", default=cfg_file, type=str, help="configuration file")
     
     config = {}
-    exec(open(parser.parse_args().config).read())
+    exec(open(parser.parse_args().config, encoding="utf-8").read())
 
     print()
     print("=============================================="*2)

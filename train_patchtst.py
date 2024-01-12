@@ -221,6 +221,6 @@ if __name__ == "__main__":
     
     args = get_args_parser(config_type='train_patchtst').parse_args()
     config = {}
-    exec(open(args.config).read())
+    exec(open(args.config, encoding="utf-8").read())
     main(config)
     print("finished! Please check the output folder.")
