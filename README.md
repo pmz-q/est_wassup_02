@@ -7,7 +7,7 @@
   + [additional-data: county-mapper](https://www.kaggle.com/datasets/michaelo/fabiendaniels-mapping-locations-and-county-codes)
 + after downloading the files, please places them as follow
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="blobs/origin-data-structure.png" alt="data-structure-image" width="250"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="blobs/origin-data-structure.png" alt="data-structure-image" width="250"/>
 
 
 # configs/prepocess_config .py  
