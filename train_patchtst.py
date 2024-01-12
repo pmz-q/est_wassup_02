@@ -156,6 +156,10 @@ def main(cfg):
         y = y_scaler.inverse_transform(pd.DataFrame(tst_ds_y))
         p = y_scaler.inverse_transform([pred])
         p_best_model = y_scaler.inverse_transform([pred_best_model])
+    else:
+        y = pd.DataFrame(tst_ds_y).to_numpy()
+        p = np.array([pred])
+        p_best_model = np.array([pred_best_model])
 
     y = np.concatenate([y[:,0], y[-1,1:]]) # true 
     p = np.concatenate([p[:,0], p[-1,1:]]) # prediction

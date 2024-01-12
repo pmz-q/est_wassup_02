@@ -1,5 +1,5 @@
 from core.preprocess import CustomDataset
-from core.utils import get_args_parser, create_path_if_not_exists
+from core.utils import get_args_parser, create_path_if_not_exists, delete_file_if_exists
 import joblib
 
 if __name__ == "__main__":
@@ -23,7 +23,9 @@ if __name__ == "__main__":
   trn_X.to_csv(output_data.get('train_csv'))
   tst_X.to_csv(output_data.get('test_csv'))
   
+  y_scaler_save = output_data.get('y_scaler_save')
+  delete_file_if_exists(y_scaler_save)
   if options.get('y_scaler') != None:
-    joblib.dump(y_scaler, output_data.get('y_scaler_save')) 
+    joblib.dump(y_scaler, y_scaler_save) 
   
   
