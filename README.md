@@ -5,7 +5,7 @@
 + for running this project, you can download files from below
   + [kaggle-competition: predict-energy-behavior-of-prosumers](https://www.kaggle.com/competitions/predict-energy-behavior-of-prosumers)
   + [additional-data: county-mapper](https://www.kaggle.com/datasets/michaelo/fabiendaniels-mapping-locations-and-county-codes)
-+ after downloading the files, please places them as follow
++ after downloading the files, please place them as follow
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="blobs/origin-data-structure.png" alt="data-structure-image" width="250"/>
 

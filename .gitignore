@@ -11,6 +11,7 @@
 auto-configs-arima/*
 auto-configs-nn/*
 auto-configs-tst/*
+output/*
 
 
 # Byte-compiled / optimized / DLL files
