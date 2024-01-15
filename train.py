@@ -20,7 +20,7 @@ import random
 
 # train & test together
 def main(cfg):
-    seed = 2023
+    seed = 42
     deterministic = True
 
     random.seed(seed)
