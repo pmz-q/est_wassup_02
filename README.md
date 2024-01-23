@@ -1,11 +1,85 @@
 <ul align="center">
 </ul>
 
+## Predicting Energy Consumption and Production of Customers Using Solar Panels
+- Purpose of the project  
+  This project follows the goal of the competition by Enefit, Kaggle, to create an energy prediction model to reduce energy imbalance costs. The issue of energy imbalance happens when the energy expected to be used doesn't line up with the actual energy used or produced. The customers of Enefit, one of the biggest energy companies in the Baltic area, use solar panels to produce energy while consuming energy at the same time for their own needs. 
+- Research Questions  
+  To predict electricity consumption and production(MWh) for the next 24 hours and 96 hours.
+  1) Consumption and production are considered separately
+  2) 24 hours/96 hours prediction
+      - 1 hour dynamic: compare ARIMA vs. ANN (prediction size = 1)
+      - 24 hours/96 hours: compare ANN vs. PatchTST[(doc link)](https://arxiv.org/abs/2211.14730) (prediction size = 24, 96)
+  3) Target
+    - in this project, only prediction_unit_id == 0 is considered as our targeted customer segment.
+
+|Report|Presentation|User Guide|
+|------|---|---|
+|[Eng_Report](https://docs.google.com/document/d/15UYSOWLKGVUQ4fAWu1KKb9zPPxe2KK0Y/edit?usp=sharing&ouid=111653611273195735193&rtpof=true&sd=true)|[Final_ppt](https://github.com/pmz-q/est_wassup_02/blob/dev-readme/blobs/final_presentation.pdf)|[Eng_UserGuide](https://github.com/pmz-q/est_wassup_02/blob/dev-readme/user-guide-eng.ipynb)|
+|[Kor_Report](https://docs.google.com/document/d/1n9cHYYn1GN0LptqJMHo-LE9e54qvHP-P/edit?usp=sharing&ouid=108127572162849084765&rtpof=true&sd=true)|[preliminary_ppt](https://github.com/pmz-q/est_wassup_02/blob/dev-readme/blobs/preliminary_presentation.pdf)|[Kor_UserGuide](https://github.com/pmz-q/est_wassup_02/blob/dev-readme/user-guide-kor.ipynb)|
+
+
+### Team
+- [pmz-q](https://github.com/pmz-q)
+- [JamieSkinard](https://github.com/JamieSKinard)
+- [angie0bb](https://github.com/angie0bb)
+- [enversel](https://github.com/enversel)
+
+
+ ### Abstract
+  This project is conducted to predict the energy consumption and production of customers using solar panels. ARIMA, SARIMA, Multi ANN, and PatchTST models were used to predict future data 24 hours in the future, and MAE, MAPE, and R2 Score were used as evaluation metrics. In conclusion, the results show that the PatchTST model (35.1360) is superior to the ANN (38.7249) in predicting consumption for 96 hours, which is a longer forecast compared to 24 hours. In the model predicting production, ANNs were mostly dominant, but PatchTST (MAE=178.8891) outperformed ANNs (MAE=205.1572) for 96 hours, which is a long-term prediction. On the other hand, in the dynamic prediction model, ANNs were dominant throughout, with dynamic (pred size=1) showing the best performance for both 24 and 96 hours.
+
+### Directory
+- `auto-configs-arima`: Arima, dirs for auto-train configs
+- `auto-configs-nn`: ANN, dirs for auto-train configs
+- `auto-configs-tst`: PatchTST, dirs for auto-train configs
+- `config`: manual config files
+- `core`: modules for Arima, ANN, PatchTST
+- `examinations`: EDA ipynb files
+- `models`: model class for ANN, PatchTST
+- `auto_train.py`: parser for auto training, match with first three auto-configs dirs
+- `train.py`: parser for manual ANN training
+- `train_arima.py`: parser for manual Arima training
+- `train_patchtst.py`: parser for manual PatchTST training
+
+### Dataset
+- Source: Enefit - Kaggle Competition([link](https://www.kaggle.com/competitions/predict-energy-behavior-of-prosumers/data))
+	- Only prediction_unit_id == 0 is selected as our target segment
+- Timeline of Dataset
+  - May 3, 2021 ~ May 31, 2021
+  - split with train, validation, and test set
+- Features (independent variables, X)
+	- full features: 44 features including electricity prices, gas prices, weather information and etc.(provided by Enefit)
+      - extra holiday features (collected from 'holidays' package([link](https://pypi.org/project/holidays/)))  
+  - selected features: 8 features are selected from the full features considering the representativeness and multicollinearity
+- Target (dependent variable, y)
+	- consumption(MWh)  
+  - production(MWh)  
+
+### Models
+- Pre-processed data
+  - merged with 'data_block_id', filled NaNs
+  - outliers in electricity price should be considered in future examinations 
+- Metrics: MAE, MAPE, R2 score
+- Best Models
+1) Consumption - 24 hours
+![image](https://github.com/pmz-q/est_wassup_02/assets/76639910/96dbaaeb-3287-48c2-9036-f078e4315da9)
+2) Consumption - 96 hours
+![image](https://github.com/pmz-q/est_wassup_02/assets/76639910/db509c3b-d490-42c4-8b2d-20dba21b958f)
+3) Production - 24 hours
+![image](https://github.com/pmz-q/est_wassup_02/assets/76639910/f32063d3-85eb-4671-988c-d75148a49651)
+4) Production - 96 hours
+![image](https://github.com/pmz-q/est_wassup_02/assets/76639910/c721396a-4321-44fa-ba55-4823e5c36a06)
+
+
+
+-------------------------------------------------------------------------------------
+
 # Original dataset placement
 + for running this project, you can download files from below
   + [kaggle-competition: predict-energy-behavior-of-prosumers](https://www.kaggle.com/competitions/predict-energy-behavior-of-prosumers)
   + [additional-data: county-mapper](https://www.kaggle.com/datasets/michaelo/fabiendaniels-mapping-locations-and-county-codes)
-+ after downloading the files, please place them as follow
++ after downloading the files, please place them as follows
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="blobs/origin-data-structure.png" alt="data-structure-image" width="250"/>
 
@@ -26,7 +100,7 @@
 
 + **FILL_NUM_STRATEGY** : function which is used for replacing `NaN` values = fill_num_strategy("custom_mean")
 
-+ **SCALER** : avaliable data scalers = {<br/>
++ **SCALER** : available data scalers = {<br/>
   "standard": StandardScaler,<br/>
   "minmax": MinMaxScaler,<br/>
   "maxabs": MaxAbsScaler,<br/>
@@ -36,7 +110,7 @@
 ## Variables that are adjustable
 + **ROW_QUERY** = {<br/>
   "prediction_unit_id": 0, # prediction_unit_id to make a prediction<br/>
-  "is_consumption": 0 # whether to make a prediction for consumption data or production data<br/>
+  "is_consumption": 0 # whether to predict consumption data or production data<br/>
 }
 + **USE_ARIMA** : whether to use target column and index only
 + **SELECTED_X_SCALER** : scaler selection for X features - if unwanted, please set this variable to None = SCALER\["minmax"]()
